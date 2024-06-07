@@ -1,6 +1,8 @@
 # Ichimocku-trading
 
-This implementation is Work-in-Progress for learning purposes. Not intended for production use. 
+This implementation is Work-in-Progress for learning purposes. The code is not ready and need to be cleaned up. Bugs may exist.
+
+Not intended for production use. 
 
 Idea:
 
