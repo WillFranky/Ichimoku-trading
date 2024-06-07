@@ -31,7 +31,7 @@ def get_sp500_symbols():
     symbols = []
     for row in table.find_all('tr')[1:]:
         symbol = row.find_all('td')[0].text.strip()
-       # symbols.append(symbol)
+        symbols.append(symbol)
     
     # OMXS30
     url = 'https://en.wikipedia.org/wiki/OMX_Stockholm_30'
@@ -40,7 +40,7 @@ def get_sp500_symbols():
     table = soup.find('table', {'class': 'wikitable sortable'})
     for row in table.find_all('tr')[1:]:
         symbol = row.find_all('td')[1].text.strip()
-        symbols.append(symbol)
+    #    symbols.append(symbol)
    
     
     # RAW MATERIALS
