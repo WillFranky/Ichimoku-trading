@@ -1,4 +1,4 @@
-# Ichimocku-trading
+# Ichimoku-trading
 
 This implementation is Work-in-Progress for learning purposes. The code is not ready and need to be cleaned up. Bugs may exist.
 
@@ -50,7 +50,7 @@ Backlog:
 - ...
 
 
-Ichimocku strategy explained:
+Ichimoku strategy explained:
 - Tenkan-sen = Time-series averaging of maximum and minimum of last 9 periods
 - Kijun-sen = Time-series average of maximum and minimum of last 26 periods
 - Senkou-Span A (=cloud Span A) = Time-series average of Tenkan-sen and Kijun-sen, shifted 26 periods in time
