@@ -7,9 +7,9 @@ Not intended for production use.
 Idea:
 
 
-Most long term investors make their largest gains in a small duration of time when stocks or markets rally. The idea with this project is to formulate a simple strategy, with high hit rate and low drawdown. It is not intended for automatic algorithmic trading, but for identifying triggers in the market to act upon. 
+The idea with this project is to formulate a simple strategy, with high hit rate and low drawdown. It is not intended for automatic algorithmic trading, but for identifying triggers in the market to act upon. 
 
-The chosen strategy is a Momentum-based strategy. 
+Most long term investors make their largest gains in a small duration of time when stocks or markets rally.For this reason, the chosen strategy is a Momentum-based strategy, intended to be used when markets/instruments are trending. 
 
 The buy signal script does currently not include selling, as this is only intended as a screener.
 A backtest is provided (ofc including selling signal), to validate this as a strategy.
@@ -19,6 +19,18 @@ Use cases are:
 - Effectively deploying limited amount of capital to get significant returns
 - Potentially it could be a way for a fundamental investor to benefit from assets otherwise less interesting (e.g. Crypto, Meme-stocks, etc)
 - ...
+
+Backtest results (07.06.2024):
+- Nvidia from 2023-01-01 to 2024-06-01 (Strong trend since ~2022):
+  8 trades
+  390% return
+  Max drawdown: 23,8%
+
+- Tesla from 2021-01-01 to 2024-06-01 (Lower priced at end of period than beginning):
+  6 trades
+  130% profit (171% max)
+  Max drawdown -24%
+  (If buy and hold would have been used for this time frame, returns would have been approx. -28%)
 
 Future use cases to be evaluated:
 - Modifying for hort-sell in downtrending markets
