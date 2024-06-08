@@ -41,7 +41,7 @@ Backtest results (07.06.2024):
 
 Future use cases to be evaluated:
 - Implement sell signal for open positions
-- Modifying for hort-sell in downtrending markets
+- Modifying for short-selling in downtrending markets
 - Trading Crypto & FX?
 - Trading automation against demo account
 - Use reliable source of data instead of Yfinance
