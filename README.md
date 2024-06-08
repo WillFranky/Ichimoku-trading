@@ -1,5 +1,7 @@
 # Ichimoku-trading
 
+Part 1
+
 This implementation is Work-in-Progress for learning purposes. The code is not ready and need to be cleaned up. Bugs may exist.
 
 Not intended for production use. 
@@ -66,3 +68,29 @@ Buy Signal:
 
 Sell Signal (only backtest):
 - Price hits Senkou Span A
+
+
+
+
+
+Part2
+
+The ichimoku strategy works well but has one significant flaw, it uses historic data. The strategy can be likened to a moving freight train. It takes time for it to get up to speed, but at least we know that once it is up to speed, it will take a while for it to come to a halt, which enables us to catch decelleration in time.
+
+If we are OK with driving while looking in the rear view mirror and if we are willing to accept incurrent losses of things we dont see in time, then this is a good strategy. 
+
+Important questions remain: Because the strategy isn't implemented to automatically trade, we cannot be certain that we always take a long position at the right moment. And we would like to project what is infront of us. We may identify opportunities where instruments are far into their breakouts. Do we then take the position and chase the price at already high levels? What if we see negative divergences in indicators or volumes?
+
+It would be a big help if we could estimate the profitability of a trade based on a statistical model and historic data.
+
+
+Tbc...
+
+
+- Strategy: Random Forest?
+- Features:
+  * Distance from Price to Senkou Span A and Senkou Span B (height over Span A and width between bands)
+  * Crossovers of Tenkan-sen and Kijun-sen
+  (still only considering long positions where price is above Span A)
+
+  Indicators? Volume? ....?
