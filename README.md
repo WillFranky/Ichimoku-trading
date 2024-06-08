@@ -81,7 +81,7 @@ If we are OK with driving while looking in the rear view mirror and if we are wi
 
 Important questions remain: Because the strategy isn't implemented to automatically trade, we cannot be certain that we always take a long position at the right moment. And we would like to project what is infront of us. We may identify opportunities where instruments are far into their breakouts. Do we then take the position and chase the price at already high levels? What if we see negative divergences in indicators or volumes?
 
-It would be a big help if we could estimate the profitability of a trade based on a statistical model and historic data.
+It would be a big help if we could decide if the trade would be profitable based on a statistical model and historic data.
 
 
 Tbc...
