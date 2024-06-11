@@ -28,7 +28,7 @@ Use cases are:
 - ...
 
 Backtest results (07.06.2024):
-- Nvidia from 2023-01-01 to 2024-06-01 (Strong trend since ~2022):
+- Nvidia from 2022-01-01 to 2024-06-01 (Strong trend since ~2022):
   8 trades
   390% return
   Max drawdown: 23,8%
