@@ -25,7 +25,13 @@ Use cases are:
 - Dedicating a small share of a larger portfolio to achieve additional gains when there is strong momentum (Especially useful if the long term portfolio is allocateed elsewhere)
 - Effectively deploying limited amount of capital to get significant returns
 - Potentially it could be a way for a fundamental investor to benefit from assets otherwise less interesting (e.g. Crypto, Meme-stocks, etc)
-- ...
+- ..
+
+Files:
+  Ichimoku buy triggers.py - Main file
+  Ichimoku backtest.py - Backtest file
+  Backtest NVIDIA.html - Export of backtest result
+  BAcktest TSLA.html - Export of backtest result
 
 Backtest results (07.06.2024):
 - Nvidia from 2022-01-01 to 2024-06-01 (Strong trend since ~2022):
