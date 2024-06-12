@@ -83,14 +83,26 @@ Part2
 
 The ichimoku strategy works well but has one significant flaw, it uses historic data. The strategy can be likened to a moving freight train. It takes time for it to get up to speed, but at least we know that once it is up to speed, it will take a while for it to come to a halt, which enables us to catch decelleration in time.
 
-If we are OK with driving while looking in the rear view mirror and if we are willing to accept incurrent losses of things we dont see in time, then this is a good strategy. 
+Backtest results are deterministic, ML algorithms are probabilistic. This means - we do not know the likelihood of outcome in Part 1. This is where ML can help.
 
-Important questions remain: Because the strategy isn't implemented to automatically trade, we cannot be certain that we always take a long position at the right moment. And we would like to project what is infront of us. We may identify opportunities where instruments are far into their breakouts. Do we then take the position and chase the price at already high levels? What if we see negative divergences in indicators or volumes?
+To improve the model, we would like to know the probability of a trade being successful and we would like to know the parameters which affects the probability of a positive outcome.
 
-Lets use machine learning to break this down further to try to understand which trades have a better chance of being successful and which not to take.
+In simple terms: If we have a signal and look at the chart, is the trade likely to be successful and should we take it?
+
+How large position do we take in this specific trade? (Assuming we use a model where we e.g. allocate more capital to less risky trades)
 
 
 Tbc...
+
+
+Notes / learnings:
+- Financial data science has inherent problem in messy data. (e.g. tickers changing, split adjustments, dividends, outliers, look-ahead bias...
+- Linear and logistic regression models are too simplistic. They are good if the number of features is low ~<10
+- Deep learning is too complicated for financial ML.
+- Random Forest has the right level of complexity (100-1000 features)
+- Feature engineering is a HIGHLY manual process. Requires deep financial market knowledge to be done properly. (=domain knowledge is crucial in ML)
+- Stationarity is a necessity, models need to be trained on what they will predict. Indices are not stationary, backtest results are. 
+- Predicting market and stock pricing is too complicated - Better to focus on predicting outcome of trading strategy
 
 
 - Strategy: Random Forest?
@@ -100,4 +112,7 @@ Tbc...
   * MACD indicator / crossover / height/ derivative?
   * Volume spikes? / Volume balance vs price?
   * downtrend length in relation to chikou span?
+  * Fundamentals: P/E, EPS, ....
+  * ...
+- Risk of overfitting?
 
