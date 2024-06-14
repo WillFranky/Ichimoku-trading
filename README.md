@@ -54,7 +54,13 @@ Future use cases to be evaluated:
 
 Backlog:
 - Check and fix lagging
-- ...
+- Streamline inefficient code - loading stock information from yFinance
+- Fix buy trigger constraint for senkou span - Done 14.06.2024
+- Fix incomplete data series for Ichimoku spans calculation - Done 14.06.2024
+- Structure code and remove redundant code
+- Implement sell triggers for existing positions
+- Implement trading strategy(?)
+- Implement position sizing(?)
 - ...
 
 
