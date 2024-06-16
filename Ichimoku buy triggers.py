@@ -63,77 +63,30 @@ def send_notification(message):
     notification.notify(
         title='Bullish Signal Detected',
         message=message,
-        timeout=10  # Notification will disappear after 10 seconds
+        timeout=10  
     )
 
-def get_stock_name(ticker_symbol):
-    try:
-        stock = yf.Ticker(ticker_symbol)
-        stock_info = stock.info
-    except Exception as e:
-        print(f"An error occurred while fetching info for {ticker_symbol}: {e}")
-        return None
-
-    stock_name = stock_info.get("longName", "Name not found")
-    
-    if stock_name == "Name not found":
-        print(f"No long name found for {ticker_symbol}")
-    
-    return stock_name
-
-
-
-
-def get_current_price(symbol, start_date, end_date):
-    stock = yf.Ticker(symbol)
-    history = stock.history(start=start_date - timedelta(days=10), end=end_date, period="1d")
-    
-    if history.empty:
-        print(f"No data available for symbol {symbol}")
-        return None
-    
-    # Ensure start_date is a datetime object
-    if isinstance(start_date, str):
-        start_date = datetime.strptime(start_date, '%Y-%m-%d')
-    
-    # Remove timezone information and normalize to midnight
-    history.index = history.index.tz_localize(None)
-    
-    # Manually normalize start_date to midnight
-    normalized_start_date = datetime(start_date.year, start_date.month, start_date.day)
-    
-    # Check for matches in the index
-    if normalized_start_date in history.index:
-        price = history.loc[normalized_start_date, 'Close']
-    else:
-        price = 0
-    
-    return price
-
-
-
-def calculate_senkou_span(symbol, date):                                                          
+def get_stock_data(symbol, date):
     try:
         start_date=date - timedelta(days=365*3)                
         end_date=date 
-        
-        # ------------------------ DUPLICATED CODE ------------------------ #
-        
-        # Retrieve historical price data for the symbol within the specified time range
+    
         stock = yf.Ticker(symbol)
         hist_data = stock.history(start=start_date, end=date)
         
         if hist_data.empty:
             print(f"No data available for symbol {symbol}")
             return None
-    
-         # Remove timezone information and normalize to midnight
+
+        # Clean data - complete missing dates and add interpolated values
+        
+        # Remove timezone information and normalize to midnight
         hist_data.index = hist_data.index.tz_localize(None)
      
          # Create a complete date range and reindex the DataFrame to include all dates
         all_days = pd.date_range(start=start_date, end=end_date, freq='D')
         
-       # Interpolate values for each column using scipy's interp1d function
+        # Interpolate values for each column using scipy's interp1d function
         columns_to_interpolate = ['Open', 'High', 'Low', 'Close']
         interpolated_data = pd.DataFrame(index=all_days)
         
@@ -151,9 +104,28 @@ def calculate_senkou_span(symbol, date):
                
         hist_data['High'] = hist_data['High'].shift(1)  # Shift the data by one day to avoid look-ahead bias
         hist_data['Low'] = hist_data['Low'].shift(1)  # Shift the data by one day to avoid look-ahead bias  
-                  
+
+        stock_info = stock.info
+        stock_name = stock_info.get("longName", "Name not found")
+
+        if stock_name == "Name not found":
+            print(f"No long name found for {symbol}")
+    
+        if hist_data is None:
+            return ("DefaultName", None)
+        else:
+            return stock_name, hist_data
+                        
+    except Exception as e:
+        print(f"Error calculating Senkou Span for {symbol}: {e}")
+        traceback.print_exc()  # Print the traceback
+        return None
+        
+def calculate_senkou_span(symbol, stock_name, hist_data, date):                                                          
+    try:
+               
         # Check if there is sufficient data: 52 days required + 26 days for the lagging span +1 for excluding last day in calculations
-        if hist_data.shape[0] < 76:
+        if hist_data.shape[0] < 79:
             print(f"Insufficient data for {symbol}. Only {hist_data.shape[0]} days of data available.")
             return None
 
@@ -269,18 +241,21 @@ def trading_strategy(sp500_symbols, start_date, end_date):
         for symbol in sp500_symbols:
             margin_down = 0
             margin_up = 0
-            price = get_current_price(symbol, start_date, end_date)
-            if price is None:
-                print(f"No data available for {symbol}, skipping.")
+           
+            result = get_stock_data(symbol, start_date)
+            if isinstance(result, (list, tuple)) and len(result) == 2:
+                stock_name, stock_data = result
+            else:
+                print(f"Error fetching data for {symbol}, skipping.")
                 continue
-         
-            stock_data = yf.download(symbol, start=(datetime.now() - DateOffset(days=365*3)), end=datetime.now(), progress=False)       # use 3*365 to get enough period for resistance levels etc
+            
+            price = stock_data['Close'].values[-1]
             resistance_level = get_resistance_levels(stock_data, symbol)
             date=start_date - DateOffset(days=1)            # Using previous days for senkou span because it should be compared to previous days close
-            senkou_spans = calculate_senkou_span(symbol, date)
+            senkou_spans = calculate_senkou_span(symbol, stock_name, stock_data, date)
             date_chikou  = date - DateOffset(days=26)
             
-            price_at_chikou = get_current_price(symbol, date_chikou, date_chikou) #Get the price on the day shifted 26 days back to be compared with Chiku Span            
+            price_at_chikou = stock_data['Close'].values[-28]  # Get the price 26 days back to be compared with Chiku Span
             
             # Check if senkou_spans is None before unpacking to prevent error
             if senkou_spans is None:                                                    
@@ -293,11 +268,11 @@ def trading_strategy(sp500_symbols, start_date, end_date):
             senkou_span_a_value = senkou_span_a_value.values[0]
             senkou_span_b_value = senkou_span_b.get(date.strftime('%Y-%m-%d'))
             senkou_span_b_value = senkou_span_b_value.values[0]
-            chikou_span_value = chikou_span.get(date_chikou.strftime('%Y-%m-%d'))  # Chikou Span is 26 periods behind
+            chikou_span_value = chikou_span.get(date_chikou.strftime('%Y-%m-%d'))  
             chikou_span_value = chikou_span_value.values[0]
-       
+    
             if resistance_level is not None and resistance_level.size > 0:
-       
+    
                 resistance_above_price = [level for level in resistance_level if level > price]
 
                 if resistance_above_price:
@@ -306,16 +281,13 @@ def trading_strategy(sp500_symbols, start_date, end_date):
                         margin_up = round(100 * (nearest_resistance - price) / price, 2)
                     else:
                         print("Price is zero, cannot calculate margin_up")
-                       # margin_up = None  # Or whatever default value you want to use       
-
-            #senkou_span_a_value = senkou_span_a_value[date.strftime('%Y-%m-%d')]#senkou_span_a.get(date.strftime('%Y-%m-%d'))
             
             if senkou_span_a_value is not None:
                 margin_down = round(100*(price - senkou_span_a_value) / price, 2)
             else:
                 print(f"No value found in senkou_span_a for date {date.strftime('%Y-%m-%d')}")
-                margin_down = 0  # Or whatever default value you want to use  
-              
+                margin_down = 0  
+            
             if senkou_span_a_value is not None and senkou_span_b_value is not None and price:         # not neeeded
                 
                 if(price > senkou_span_a_value):
@@ -325,31 +297,39 @@ def trading_strategy(sp500_symbols, start_date, end_date):
                         if(chikou_span_value > price_at_chikou):
                             print()
                             print("SPAN > PRICE for ", symbol)
+                            print(f"Price: {price}")
+                            print(f"Nearest resistance: {nearest_resistance}")
+                            print(f"Senkou Span A: {senkou_span_a_value}")
                             print(f"Date at Chikou: {date_chikou.strftime('%Y-%m-%d')}")
                             print(f"Price at Chikou: {price_at_chikou}")
                             print(f"Chikou Span: {chikou_span_value}")
                             print()
                         
-                            if (price > nearest_resistance or price < 0.9 * nearest_resistance):
+                            if (price > nearest_resistance or price < nearest_resistance): #0.9 * nearest_resistance):
                                 kumo_breakout_detected = True
                                 message = f"Kumo breakout detected for {symbol} - Bullish signal! Consider buying."
                                 print(message)
                                 send_notification(message)
                                 triggered_symbols.append(symbol)
-                                log_long_trade(get_stock_name(symbol), symbol, senkou_span_a_value, senkou_span_b_value, margin_down, margin_up, start_date, end_date)
-                                plot_resistances(stock_data, symbol, resistance_level, senkou_span_a, senkou_span_b, chikou_span, margin_up, margin_down)
-                                #if (price > nearest_resistance or price < 0.9 * nearest_resistance):
+                                log_long_trade(stock_name, symbol, stock_data, senkou_span_a_value, senkou_span_b_value, margin_down, margin_up, start_date, end_date)
+                                #plot_resistances(stock_data, symbol, resistance_level, senkou_span_a, senkou_span_b, chikou_span, margin_up, margin_down)
                             
                             else:  
                                 print(f"Ticker {symbol}, no trigger")
                         else:
-                            print()
-                            print("SPAN < PRICE for ", symbol)
-                            print(f"Date at Chikou: {date_chikou.strftime('%Y-%m-%d')}")
-                            print(f"Price at Chikou: {price_at_chikou}")
-                            print(f"Chikou Span: {chikou_span_value}")
-                            #print(chikou_span)
-                            print()
+                            print(f"Chikou Span below price for {symbol}")
+                    else:
+                        print(f"Senkou Span A below Senkou Span B for {symbol}")
+                else:
+                    print()
+                    print("SPAN < PRICE for ", symbol)
+                    print(f"Price: {price}")
+                    print(f"Nearest resistance: {nearest_resistance}")
+                    print(f"Senkou Span A: {senkou_span_a_value}")
+                    print(f"Date at Chikou: {date_chikou.strftime('%Y-%m-%d')}")
+                    print(f"Price at Chikou: {price_at_chikou}")
+                    print(f"Chikou Span: {chikou_span_value}")
+                    print()
               
         return kumo_breakout_detected, triggered_symbols, start_date
     except Exception as e:
@@ -357,7 +337,6 @@ def trading_strategy(sp500_symbols, start_date, end_date):
         
         return False, [], start_date
 
-# Ensure the function always returns three values in all cases
     return False, [], start_date
 
 
@@ -367,7 +346,6 @@ def plot_resistances(stock_data, symbol, resistance_levels, senkou_span_a, senko
     trim_values = len(senkou_span_a) - len(stock_data.index)
 
     # Ensure all spans are aligned with stock_data
-    #stock_data = stock_data.reset_index(drop=False)   ----- removes date index
     min_len = min(len(stock_data), len(senkou_span_a), len(senkou_span_b), len(chikou_span))
 
     stock_data = stock_data.iloc[-min_len:]
@@ -375,23 +353,15 @@ def plot_resistances(stock_data, symbol, resistance_levels, senkou_span_a, senko
     senkou_span_b = senkou_span_b.iloc[-min_len:]
     chikou_span = chikou_span.iloc[-min_len:]
     
-    
-    
-    # Ensure that we have 365 days of data
-    if len(stock_data) < 365:
-        print(f"Warning: Only {len(stock_data)} days of data available for {symbol}")
-    
     # Plotting
     if resistance_levels is None:
-        resistance_levels = []  # or some other appropriate default value
+        resistance_levels = []  
     plt.figure(figsize=(28,7))
     plt.plot(stock_data['Close'], label="Close Price")
-  
     
     plt.plot(stock_data.index, senkou_span_a, label="Senkou Span A", color='g')
     plt.plot(stock_data.index, senkou_span_b, label="Senkou Span B", color='r')
     plt.plot(stock_data.index, chikou_span, label="Chikou Span", color='tab:brown')
-    
     
     for level in resistance_levels:
         plt.axhline(y=level, color='r', linestyle='--')
@@ -429,7 +399,7 @@ def plot_resistances(stock_data, symbol, resistance_levels, senkou_span_a, senko
         
     return 
 
-# --------------- PLOT TO EXCEL --------------- #
+# --------------- PRINT TO EXCEL --------------- #
 
 
 def create_trades_workbook():
@@ -463,8 +433,8 @@ def create_trades_workbook():
         print("Excel file 'long triggers.xlsx' already exists.")
 
 
-def log_long_trade(name, ticker, price_senkou_span_a_value, senkou_span_b_value, margin_from_cloud_span_a, margin_to_resistance, start_date, end_date):
-    # Append the new trigger to "Triggers" sheet in the workbook    
+def log_long_trade(name, ticker, stock_data, price_senkou_span_a_value, senkou_span_b_value, margin_from_cloud_span_a, margin_to_resistance, start_date, end_date):
+
     xlsx = load_workbook("long triggers.xlsx")
     ws_triggers = xlsx["Triggers"]
     
@@ -473,7 +443,7 @@ def log_long_trade(name, ticker, price_senkou_span_a_value, senkou_span_b_value,
         'Date': [start_date],
         'Name': [name],
         'Ticker': [ticker],
-        'Price': [get_current_price(ticker, start_date, end_date)],  # Get the current price of the stock
+        'Price': [stock_data['Close'].values[-1]], #[get_current_price(ticker, start_date, end_date)],  # Get the current price of the stock
         'Price Senkou Span A': [price_senkou_span_a_value],
         'Senkou Span B': [senkou_span_b_value],
         'Margin from Cloud Span A': [margin_from_cloud_span_a],
@@ -485,8 +455,7 @@ def log_long_trade(name, ticker, price_senkou_span_a_value, senkou_span_b_value,
 
     xlsx.save("long triggers.xlsx")
     
-    xlsx.close()                   #<--- Dont forget to close workbook. load once and pass as parameter to function
-
+    xlsx.close()                   
     
 def main():
     
@@ -499,9 +468,8 @@ def main():
     
     sp500_symbols = get_sp500_symbols()
     while date < end_date:
-        #date_unix=int(date.timestamp())            # --- debug!! --- #
         kumo_breakout_detected, triggered_symbols, start_date = trading_strategy(sp500_symbols, date, end_date)
-        #print(f"Date unix: :  {date_unix}")
+
         if not kumo_breakout_detected:
             message = "No Kumo breakout triggers were found for any stock in the S&P 500 index."
             print(message)
