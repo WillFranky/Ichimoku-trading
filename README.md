@@ -1,6 +1,6 @@
 # Ichimoku-trading
 
-Part 1
+Part 1 - Ichimoku trading algorithm implementation
 
 This implementation is Work-in-Progress for learning purposes. The code is not ready and need to be cleaned up. Bugs may exist.
 
@@ -85,20 +85,75 @@ Sell Signal (only backtest):
 
 
 
-Part2
+Part2 - Using Machine Learing to predict trade probability of success
 
-The ichimoku strategy works well but has one significant flaw, it uses historic data. The strategy can be likened to a moving freight train. It takes time for it to get up to speed, but at least we know that once it is up to speed, it will take a while for it to come to a halt, which enables us to catch decelleration in time.
-
-Backtest results are deterministic, ML algorithms are probabilistic. This means - we do not know the likelihood of outcome in Part 1. This is where ML can help.
+The ichimoku strategy works well but has some significant flaws. It uses historic data, and although it looks to be performing well, most breakouts fail. Backtest results are deterministic, ML algorithms are probabilistic. This means - we do not know the actual likelihood of outcome in Part 1 we just know the actual results of what has already happened. This is where ML can help in answering the questions, is this a good trade to take and what position size (=risk) is involved in this trade?
 
 To improve the model, we would like to know the probability of a trade being successful and we would like to know the parameters which affects the probability of a positive outcome.
 
-In simple terms: If we have a signal and look at the chart, is the trade likely to be successful and should we take it?
+- I want to predict: The probability of the trade yielding at least 20% profit in 30 days.
+- The script screens all s&p500 stocks and gives me a shortlist of stocks where probability is deemed to be over 50%.
+- Features used: 'macd', 'Volume', 'senkou_span_a', 'rsi', 'stochastic', 'pe_ratio', 'growth_rate'. 
+- The mdoel uses 10 years of data
 
-How large position do we take in this specific trade? (Assuming we use a model where we e.g. allocate more capital to less risky trades)
+Performance (ticker SMCI):
+- Accuracy: 0.67 (=67% ability to predict correctly)
+- Precision: 0.63 (=63% ability to identify positive outcomes)
+- Recall: 0.22 (=22% ability to identify true positives - to be improved)
+- F1 Score: 0.33
 
+Collinearity / VIF:
+- MACD: 2.061204
+- Volume: 3.019751
+- Senkou Span A: 2.097778
+- RSI: 3.202211
+- Stochhastic: 2.978582
+-  P/E Ratio: 16.707104
+-  Earnings growth rate: 1.427803
 
-Tbc...
+Result (SMCI, last 6 months):
+2024-01-19: 0.99
+2024-01-22: 0.98
+2024-01-23: 0.65
+2024-01-24: 0.80
+2024-01-29: 0.71
+2024-01-30: 0.96
+2024-01-31: 0.75
+2024-02-01: 0.81
+2024-02-02: 0.73
+2024-02-05: 0.94
+2024-02-06: 0.95
+2024-02-07: 0.69
+2024-02-09: 0.54
+2024-02-12: 0.90
+2024-02-13: 0.79
+2024-02-14: 0.95
+2024-02-15: 0.99
+2024-02-16: 1.00
+2024-02-20: 0.99
+2024-02-21: 0.86
+2024-02-22: 0.99
+2024-02-23: 0.95
+2024-03-04: 0.95
+2024-03-05: 0.64
+2024-03-15: 0.85
+2024-03-18: 0.54
+2024-03-19: 0.56
+2024-04-19: 0.96
+2024-04-22: 0.61
+2024-04-23: 0.52
+2024-05-01: 0.87
+2024-05-23: 0.65
+2024-06-13: 0.69
+2024-06-20: 0.79
+2024-06-28: 0.93
+
+In general, the predicitons seem to be correct.
+
+Outcomes:
+- A first ML model in predicting trade probabilities.
+- The model needs more tweaking to improve its performance.
+- As interesting as the model is, it may not be the correct approach or may need additional adjustments to fit the use case set out in the initial problem. It was assumed that the majority of profits are realized when markets/stocks are breaking out, and that majority of breakouts fail. If a breakout is likened to a Tsunami, it may not be the best approach to consider tidal waves and daily noise in predicting these(?). E.g. Given how rare these events are, are datasets large enough to capture breakouts? Are there other factors to take into account which are more important?
 
 
 Notes / learnings:
@@ -107,18 +162,16 @@ Notes / learnings:
 - Deep learning is too complicated for financial ML.
 - Random Forest has the right level of complexity (100-1000 features)
 - Feature engineering is a HIGHLY manual process. Requires deep financial market knowledge to be done properly. (=domain knowledge is crucial in ML)
-- Stationarity is a necessity, models need to be trained on what they will predict. Indices are not stationary, backtest results are. 
-- Predicting market and stock pricing is too complicated - Better to focus on predicting outcome of trading strategy
+- Stationarity is a necessity, models need to be trained on what they will predict. Indices are not stationary, backtest results are.
+
+Predicting the stock market certainly is complicated, and will inevitably go wrong to some extent - Focusing on predicting outcome of trading strategy is a better bet.
 
 
-- Strategy: Random Forest?
-- Features:
-  * Senkou Span width narrowing?
-  * Crossovers of Tenkan-sen and Kijun-sen?
-  * MACD indicator / crossover / height/ derivative?
-  * Volume spikes? / Volume balance vs price?
-  * downtrend length in relation to chikou span?
-  * Fundamentals: P/E, EPS, ....
-  * ...
-- Risk of overfitting?
+
+
+Part 3 - Improvements to the Machine Learning algorithm
+Adjusting algorithm to predict outcome of Ichimoku strategy and focusing on breakouts.
+
+TBC...
+
 
