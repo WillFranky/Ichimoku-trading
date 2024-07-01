@@ -191,7 +191,7 @@ def predict_trade_success(symbol, date):
     success_probability = model.predict_proba(latest_features_scaled)[:, 1][0]
     
     print(f"For {symbol} on {date}:")
-    print(f"Probability of Hitting +10% Profit Target: {success_probability:.2f}")
+    print(f"Probability of Hitting +20% Profit Target: {success_probability:.2f}")
     
     if success_probability > 0.5:
         print("Recommendation: Buy")
