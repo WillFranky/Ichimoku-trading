@@ -187,9 +187,9 @@ Outcomes:
 
 Notes / learnings:
 - Financial data science has inherent problem in messy data. (e.g. tickers changing, split adjustments, dividends, outliers, look-ahead bias...
-- Linear and logistic regression models are too simplistic. They are good if the number of features is low ~<10
+- Linear and logistic regression models are simple (too simplistic?). They are good if the number of features is low ~<10
 - Deep learning is too complicated for financial ML.
-- Random Forest has the right level of complexity (100-1000 features)
+- Random Forest might have (?) the right level of complexity for more professional algorithms (100-1000 features)
 - Feature engineering is a HIGHLY manual process. Requires deep financial market knowledge to be done properly. (=domain knowledge is crucial in ML)
 - Stationarity is a necessity, models need to be trained on what they will predict. Indices are not stationary, backtest results are.
 
