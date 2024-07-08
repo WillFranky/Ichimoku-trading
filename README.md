@@ -6,8 +6,6 @@ This implementation is Work-in-Progress for learning purposes. The code is not r
 
 Not intended for production use. 
 
-Please note - this project uses yfinance which has been deprecated (Although still works). Yfinance is unstable which impacts the results. 
-
 <h3>Idea:</h3>
 
 The idea with this project is to formulate a simple strategy, with high hit rate and low drawdown. It is not intended for automatic algorithmic trading, but for identifying triggers in the market to act upon. 
@@ -24,10 +22,10 @@ This project aims to provide early notification, so that positions can be opened
 
 <h3>Use cases are:</h3>
 <ul>
-<li>- Dedicating a small share of a larger portfolio to achieve additional gains when there is strong momentum (Especially useful if the long term portfolio is allocateed elsewhere)</li>
-<li>- Effectively deploying limited amount of capital to get significant returns</li>
-<li>- Potentially it could be a way for a fundamental investor to benefit from assets otherwise potentially less interesting (e.g. Crypto, Meme-stocks, etc)</li>
-<li>- ..</li>
+<li> Dedicating a small share of a larger portfolio to achieve additional gains when there is strong momentum (Especially useful if the long term portfolio is allocateed elsewhere)</li>
+<li> Effectively deploying limited amount of capital to get significant returns</li>
+<li> Potentially it could be a way for a fundamental investor to benefit from assets otherwise potentially less interesting (e.g. Crypto, Meme-stocks, etc)</li>
+<li> ..</li>
 </ul>
 <br>
 
@@ -43,15 +41,17 @@ This project aims to provide early notification, so that positions can be opened
 <h3>Backtest results (07.06.2024):</h3>
 <ul>
 <li>Nvidia from 2022-01-01 to 2024-06-01 (Strong trend since ~2022):</li>
-<ul> <li></li> 8 trades </li><li>  390% return </li><li>   Max drawdown: 23,8%</li>
+<ul> <li> 8 trades </li><li>  390% return </li><li>   Max drawdown: 23,8%</li>
 </ul>
-<ul>
+</ul><ul>
+
+
 <li>Tesla from 2021-01-01 to 2024-06-01 (Lower priced at end of period than beginning):</li>
    <ul><li>6 trades</li><li>  130% profit (171% max)</li><li>   Max drawdown -24%</li><li>  
   (If buy and hold would have been used for this time frame, returns would have been approx. -28%)
-   </li>
+   </li></ul> 
 </ul>
-</ul> 
+<ul>
 <h3>Future use cases to be evaluated:</h3>
 <ul>
 <li>Implement sell signal for open positions</li>
@@ -111,11 +111,11 @@ To improve the model, we would like to know the probability of a trade being suc
 <li>I want to predict: The probability of the trade yielding at least 20% profit in 30 days.</li>
 <li>The script screens all s&p500 stocks and gives me a shortlist of stocks where probability is deemed to be over 50%.</li>
 <li>Features used: 'macd', 'Volume', 'senkou_span_a', 'rsi', 'stochastic', 'pe_ratio', 'growth_rate'. </li>
-<li>The mdoel uses 10 years of data</li>
+<li>The model uses 10 years of data</li>
 </ul>
 <br>
 
-'Performance (ticker SMCI):
+Performance (ticker SMCI):
 <ul>
 <li>Accuracy: 0.67 (=67% ability to predict correctly)</li>
 <li>Precision: 0.63 (=63% ability to identify positive outcomes)</li>
@@ -183,6 +183,7 @@ Outcomes:
 - A first ML model in predicting trade probabilities.
 - The model needs more tweaking to improve its performance.
 - As interesting as the model is, it may not be the correct approach or may need additional adjustments to fit the use case set out in the initial problem. It was assumed that the majority of profits are realized when markets/stocks are breaking out, and that majority of breakouts fail. If a breakout is likened to a Tsunami, it may not be the best approach to consider tidal waves and daily noise in predicting these(?). E.g. Given how rare these events are, are datasets large enough to capture breakouts? Are there other factors to take into account which are more important?
+- In the current setup, the results are influenced by the sample size - to be revisited.
 
 
 Notes / learnings:
